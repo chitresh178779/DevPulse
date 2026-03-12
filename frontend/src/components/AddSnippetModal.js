@@ -98,6 +98,10 @@ const AddSnippetModal = ({ isOpen, onClose, onRefresh, mode, initialData }) => {
               <option value="javascript">JavaScript</option>
               <option value="python">Python</option>
               <option value="sql">SQL</option>
+              <option value="C">C</option>
+              <option value="C++">C++</option>
+              <option value="java">Java</option>
+              <option value="go">Go</option>
               <option value="env">Environment (.env)</option>
               <option value="other">Other / Plain Text</option>
             </select>

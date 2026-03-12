@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from api.views import GitHubLogin , SnippetViewSet
+from api.views import GitHubLogin, RepoAnalyticsView , SnippetViewSet, CodeAuditorView
 
 
 router = DefaultRouter()
@@ -29,4 +29,6 @@ urlpatterns = [
     path('api/auth/', include('dj_rest_auth.urls')),
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
     path('api/auth/github/login/', GitHubLogin.as_view(), name='github_login'),
+    path('api/analytics/repos/', RepoAnalyticsView.as_view(), name='repo_analytics'),
+    path('api/utilities/extract/', CodeAuditorView.as_view(), name='code_auditor'),
 ]

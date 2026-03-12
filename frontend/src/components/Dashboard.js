@@ -12,6 +12,9 @@ import api from '../services/api';
 import './Dashboard.css';
 import SnippetCard from './SnippetCard';
 import AddSnippetModal from './AddSnippetModal';
+import RepoAnalytics from './RepoAnalytics';
+import UtilityVault from './UtilityVault';
+import { FolderGit2 ,Wand2} from 'lucide-react';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -86,6 +89,13 @@ const openModal = (mode, snippet = null) => {
             <span>Secret Vault</span>
           </button>
           <button 
+            className={`nav-item ${activeTab === 'utilities' ? 'active' : ''}`}
+            onClick={() => setActiveTab('utilities')}
+          >
+            <Wand2 size={18} />
+            <span>AI Utilities</span>
+          </button>
+          <button 
             className={`nav-item ${activeTab === 'components' ? 'active' : ''}`}
             onClick={() => setActiveTab('components')}
           >
@@ -93,6 +103,13 @@ const openModal = (mode, snippet = null) => {
             <span>Components</span>
           </button>
         </nav>
+        <button 
+            className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`}
+            onClick={() => setActiveTab('analytics')}
+          >
+            <FolderGit2 size={18} />
+            <span>Repo Pulse</span>
+          </button>
 
         {/* Updated: Use setIsModalOpen consistently */}
         <button className="nav-item active" onClick={() => openModal('create')}>
@@ -160,6 +177,16 @@ const openModal = (mode, snippet = null) => {
              <p>Select a tab from the sidebar to manage your workspace.</p>
            </div>
         )}
+        {activeTab === 'analytics' && (
+        <div className="fade-in">
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ fontSize: '1.5rem', margin: '0 0 8px 0' }}>Repository Pulse</h3>
+            <p style={{ color: 'var(--text-muted)', margin: 0 }}>AI-driven health metrics and recovery steps for your codebase.</p>
+          </div>
+          <RepoAnalytics />
+        </div>
+      )}
+      {activeTab === 'utilities' && <UtilityVault />}
       </main>
 
       {/* Modal handles creation of new records */}
