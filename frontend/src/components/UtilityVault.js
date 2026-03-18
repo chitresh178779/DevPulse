@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Braces, Key, FileSearch, Clock, Wand2, ArrowRight } from 'lucide-react';
 import cronstrue from 'cronstrue';
 import api from '../services/api';
@@ -58,14 +58,14 @@ import 'prismjs/themes/prism-tomorrow.css';
         {/* Test String Input */}
         <textarea 
             className="form-input" 
-            style={{ width: '100%', fontFamily: 'monospace', height: '60px', marginBottom: '12px', resize: 'none' }} 
+            style={{ width: '100%',boxSizing: 'border-box', fontFamily: 'monospace', height: '60px', marginBottom: '12px', resize: 'none' }} 
             value={testString} 
             onChange={(e) => setTestString(e.target.value)} 
             placeholder="Paste a string here to test the regex..." 
         />
 
         {/* Live Match Results */}
-        <div className="form-input" style={{ width: '100%', minHeight: '40px', backgroundColor: 'var(--bg-main)', fontFamily: 'monospace', maxHeight: '100px', overflowY: 'auto' }}>
+        <div className="form-input" style={{ width: '100%',boxSizing: 'border-box', minHeight: '40px', backgroundColor: 'var(--bg-main)', fontFamily: 'monospace', maxHeight: '100px', overflowY: 'auto' }}>
             {error ? (
             <span style={{ color: '#ef4444' }}>{error}</span>
             ) : testString.length === 0 ? (
@@ -85,6 +85,23 @@ const UtilityVault = () => {
   const [masterCode, setMasterCode] = useState('');
   const [entities, setEntities] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  // Tracks the length of the code to detect large pastes
+  const [lastCodeLength, setLastCodeLength] = useState(0);
+  // The Magic "Auto-Extract on Paste" Hook
+  useEffect(() => {
+    const lengthDiff = Math.abs(masterCode.length - lastCodeLength);
+    
+    // If the code jumps by more than 30 characters at once, it's a paste event!
+    if (lengthDiff > 30 && masterCode.length > 10) {
+      const timer = setTimeout(() => {
+        analyzeCode();
+      }, 800); // Wait 800ms after pasting to trigger the AI
+      
+      return () => clearTimeout(timer);
+    }
+    
+    setLastCodeLength(masterCode.length);
+  }, [masterCode]);
 
   // --- 1. The AI Extraction Trigger ---
   const analyzeCode = async () => {
@@ -92,6 +109,7 @@ const UtilityVault = () => {
     setIsAnalyzing(true);
     try {
       const res = await api.post('utilities/extract/', { code: masterCode });
+      console.log("AI Extraction Results:", res.data.entities);
       setEntities(res.data.entities);
     } catch (err) {
       console.error("Failed to analyze code", err);
@@ -140,7 +158,7 @@ const UtilityVault = () => {
           <div className="repo-card" style={{ padding: '16px', marginBottom: '16px' }}>
             <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: 0 }}><Braces size={16} color="#3b82f6" /> JSON Object</h4>
             <div style={{ display: 'flex', gap: '10px' }}>
-              <textarea className="form-input" style={{ flex: 1, fontFamily: 'monospace', height: '150px' }} value={value} onChange={handleChange} />
+              <textarea className="form-input" style={{ flex: 1,boxSizing: 'border-box', fontFamily: 'monospace', height: '150px' }} value={value} onChange={handleChange} />
               <ArrowRight style={{ alignSelf: 'center', color: 'var(--text-muted)' }} />
               <textarea className="form-input" style={{ flex: 1, fontFamily: 'monospace', height: '150px', background: 'var(--bg-main)' }} value={formattedJson} readOnly />
             </div>
@@ -159,10 +177,10 @@ const UtilityVault = () => {
         return (
           <div className="repo-card" style={{ padding: '16px', marginBottom: '16px' }}>
             <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: 0 }}><Key size={16} color="#f59e0b" /> JWT Token</h4>
-            <textarea className="form-input" style={{ width: '100%', fontFamily: 'monospace', marginBottom: '10px' }} value={value} onChange={handleChange} />
+            <textarea className="form-input" style={{ width: '100%',boxSizing: 'border-box', fontFamily: 'monospace', marginBottom: '10px' }} value={value} onChange={handleChange} />
             <div style={{ display: 'flex', gap: '10px' }}>
-              <textarea className="form-input" style={{ flex: 1, fontFamily: 'monospace', height: '100px', background: 'var(--bg-main)', color: '#f59e0b' }} value={jwtData.header} readOnly />
-              <textarea className="form-input" style={{ flex: 2, fontFamily: 'monospace', height: '100px', background: 'var(--bg-main)', color: '#10b981' }} value={jwtData.payload} readOnly />
+              <textarea className="form-input" style={{ flex: 1,boxSizing: 'border-box', fontFamily: 'monospace', height: '100px', background: 'var(--bg-main)', color: '#f59e0b' }} value={jwtData.header} readOnly />
+              <textarea className="form-input" style={{ flex: 2,boxSizing: 'border-box', fontFamily: 'monospace', height: '100px', background: 'var(--bg-main)', color: '#10b981' }} value={jwtData.payload} readOnly />
             </div>
           </div>
         );
@@ -173,7 +191,7 @@ const UtilityVault = () => {
         return (
           <div className="repo-card" style={{ padding: '16px', marginBottom: '16px' }}>
             <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: 0 }}><Clock size={16} color="#10b981" /> Cron Expression</h4>
-            <input type="text" className="form-input" style={{ width: '100%', fontFamily: 'monospace', fontSize: '1.2rem', textAlign: 'center' }} value={value} onChange={handleChange} />
+            <input type="text" className="form-input" style={{ width: '100%',boxSizing: 'border-box', fontFamily: 'monospace', fontSize: '1.2rem', textAlign: 'center' }} value={value} onChange={handleChange} />
             <p style={{ textAlign: 'center', color: '#10b981', fontWeight: 'bold', marginTop: '10px' }}>{humanCron}</p>
           </div>
         );
@@ -193,7 +211,7 @@ const UtilityVault = () => {
       {/* --- Top Header Section --- */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <div>
-          <h3 style={{ fontSize: '1.8rem', margin: '0 0 4px 0', textTransform: 'uppercase', letterSpacing: '1px' }}>AI Code Auditor</h3>
+        <h3 style={{ fontSize: '1.8rem', margin: '0 0 4px 0', textTransform: 'uppercase', letterSpacing: '1px' }}>UTILITIES</h3>
           <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.9rem' }}>Paste monolithic code. Auto-provision utilities.</p>
         </div>
         <button 

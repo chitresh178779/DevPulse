@@ -24,7 +24,7 @@ const ScoreRing = ({ score }) => {
 const RepoAnalytics = () => {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(true);
-
+ 
   useEffect(() => {
     api.get('analytics/repos/')
       .then(res => {

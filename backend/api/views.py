@@ -15,8 +15,9 @@ from .serializers import SnippetSerializer
 from rest_framework import permissions, viewsets
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from allauth.socialaccount.models import SocialAccount
+from allauth.socialaccount.models import SocialAccount, SocialToken
 api_key = os.getenv("GENAI_API_KEY")
+print(api_key)
 genai.configure(api_key=api_key)
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -42,24 +43,41 @@ class RepoAnalyticsView(APIView):
 
     def get(self, request):
         try:
-            # 1. Find the GitHub social account linked to the logged-in user
+            # 1. Find the GitHub social account
             social_account = SocialAccount.objects.get(user=request.user, provider='github')
-            
-            # 2. Extract the exact GitHub handle
             github_username = social_account.extra_data.get('login')
             
             if not github_username:
-                return Response({"error": "Could not extract GitHub handle from profile."}, status=400)
+                return Response({"error": "Could not extract GitHub handle."}, status=400)
+                
+            # 2. Get the GitHub Access Token to bypass rate limits
+            try:
+                social_token = SocialToken.objects.get(account=social_account)
+                github_token = social_token.token
+            except SocialToken.DoesNotExist:
+                github_token = None
                 
         except SocialAccount.DoesNotExist:
-            return Response({"error": "No linked GitHub account found for this user."}, status=400)
+            return Response({"error": "No linked GitHub account found."}, status=400)
         
-        # 3. Fetch the repositories using the correct handle
+        # 3. Fetch repositories WITH the Authorization header
         url = f"https://api.github.com/users/{github_username}/repos?sort=updated&per_page=6"
-        gh_response = requests.get(url)
+        
+        headers = {'Accept': 'application/vnd.github.v3+json'}
+        if github_token:
+            headers['Authorization'] = f'token {github_token}'
+            
+        gh_response = requests.get(url, headers=headers)
 
         if gh_response.status_code != 200:
-            return Response({"error": "Failed to fetch from GitHub API"}, status=gh_response.status_code)
+            # Changed status to 502 (Bad Gateway) so React doesn't confuse this with a 403 Login error!
+            print("GitHub API Error:", gh_response.json()) # Log the actual GitHub error to your terminal
+            return Response({"error": "Failed to fetch from GitHub API"}, status=502)
+
+        # ---> MISSING PIECE 1: Parse the JSON response
+        repos = gh_response.json()
+        
+        # ... rest of your code ...
 
         # ---> MISSING PIECE 1: Parse the JSON response
         repos = gh_response.json()
@@ -153,6 +171,11 @@ class CodeAuditorView(APIView):
         
         prompt = f"""
         Analyze the following code block. Find and extract any standalone JSON objects, JWT tokens, Cron expressions, or Regex patterns.
+        
+        CRITICAL RULES:
+        1. For Regex patterns, you MUST return the EXACT verbatim substring as it appears in the code. 
+        2. Preserve ALL double backslashes (e.g., if the code has \\\\d, you must return \\\\d, do NOT unescape it to \\d).
+        
         Return a JSON array of objects. Each object must have:
         "type" (string: exactly one of "json", "jwt", "cron", or "regex"),
         "raw_string" (string: the exact verbatim substring found in the code).
@@ -172,6 +195,7 @@ class CodeAuditorView(APIView):
             return Response({"error": "Extraction failed"}, status=500)
 
         # 2. Deterministic Index Mapping (The Safety Net)
+        # 2. Deterministic Index Mapping (AI-Resilient Version)
         bindable_entities = []
         search_offset = 0
 
@@ -180,9 +204,24 @@ class CodeAuditorView(APIView):
             if not raw_string: 
                 continue
 
-            # Find exact starting point in the massive string
+            # Attempt 1: Exact match (Works for JSON, JWT, Cron)
             start_index = code_block.find(raw_string, search_offset)
             
+            # Attempt 2: AI stripped the double backslashes (Common with Regex)
+            if start_index == -1:
+                re_escaped_string = raw_string.replace('\\', '\\\\')
+                start_index = code_block.find(re_escaped_string, search_offset)
+                if start_index != -1:
+                    raw_string = re_escaped_string # Update to the true code string
+
+            # Attempt 3: AI wrapped it in extra quotes
+            if start_index == -1:
+                stripped_string = raw_string.strip('"\'')
+                start_index = code_block.find(stripped_string, search_offset)
+                if start_index != -1:
+                    raw_string = stripped_string
+
+            # If we successfully found the starting index using any method above:
             if start_index != -1:
                 end_index = start_index + len(raw_string)
                 bindable_entities.append({
@@ -192,8 +231,10 @@ class CodeAuditorView(APIView):
                     "startIndex": start_index,
                     "endIndex": end_index
                 })
-                # Move offset to prevent finding the exact same string twice incorrectly
                 search_offset = end_index 
+            else:
+                # Log to the Django terminal if it STILL fails, so we aren't blind
+                print(f"DEBUG - Failed to map {item.get('type')}: {raw_string}")
 
         return Response({
             "original_code": code_block,

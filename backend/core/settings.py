@@ -122,14 +122,17 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 
 SIMPLE_JWT = {
-    # Extend the active session from 5 minutes to 7 days
+    #active session from 5 minutes to 7 days
     'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
     
-    # Extend the refresh token to 30 days
+    # refresh token to 30 days
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
     
     'ROTATE_REFRESH_TOKENS': False,
@@ -183,9 +186,8 @@ STATIC_URL = 'static/'
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000", 
-]
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
 
 # Add this line to allow React to send and receive secure cookies

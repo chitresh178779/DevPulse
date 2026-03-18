@@ -86,14 +86,14 @@ const openModal = (mode, snippet = null) => {
             onClick={() => setActiveTab('vault')}
           >
             <ShieldCheck size={18} />
-            <span>Secret Vault</span>
+            <span>Vault</span>
           </button>
           <button 
             className={`nav-item ${activeTab === 'utilities' ? 'active' : ''}`}
             onClick={() => setActiveTab('utilities')}
           >
             <Wand2 size={18} />
-            <span>AI Utilities</span>
+            <span>Utilities</span>
           </button>
           <button 
             className={`nav-item ${activeTab === 'components' ? 'active' : ''}`}
