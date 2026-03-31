@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../services/api'; // Your Axios instance
 import { Shield, Zap, BookOpen, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
+import CodeEditor from '@uiw/react-textarea-code-editor';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const CodeAuditor = () => {
   const [code, setCode] = useState('');
@@ -78,23 +81,51 @@ const CodeAuditor = () => {
           <p className="text-slate-400 text-sm">Submit monolithic code for deep architectural analysis.</p>
         </div>
         
-        <textarea
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="Paste your code here..."
-          className="code-auditor-textarea"
-        />
+        {/* Premium IDE Container */}
+        <div className="ide-container flex-1">
+          {/* Mac-style Window Header */}
+          <div className="ide-header">
+            <div className="ide-dots">
+              <div className="dot red"></div>
+              <div className="dot yellow"></div>
+              <div className="dot green"></div>
+            </div>
+          </div>
 
+          {/* The Editor */}
+          <CodeEditor
+            value={code}
+            language="js"
+            placeholder="Paste your code here..."
+            onChange={(evn) => setCode(evn.target.value)}
+            padding={16}
+            className="perfect-aligned-editor"
+            style={{ backgroundColor: "transparent" }}
+          />
+
+          {/* Glassmorphism Analyzing Overlay */}
+          {(status === 'SUBMITTING' || status === 'POLLING') && (
+            <div className="analyzing-overlay">
+              <div className="scanning-line"></div>
+              <Loader2 className="w-10 h-10 animate-spin text-indigo-400 mb-3" />
+              <p className="text-indigo-300 font-semibold tracking-wide animate-pulse">
+                Running Deep Audit...
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Premium Gradient Button */}
         <button
           onClick={startAudit}
           disabled={status === 'SUBMITTING' || status === 'POLLING' || !code.trim()}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg"
+          className="premium-audit-btn "
         >
           {status === 'SUBMITTING' && <Loader2 className="animate-spin w-5 h-5" />}
-          {status === 'POLLING' && <Loader2 className="animate-spin w-5 h-5 text-indigo-400" />}
+          {status === 'POLLING' && <Loader2 className="animate-spin w-5 h-5" />}
           
           {status === 'IDLE' || status === 'COMPLETED' || status === 'FAILED' ? 'Run Deep Audit' : 
-           status === 'SUBMITTING' ? 'Submitting to Queue...' : 'AI is Analyzing...'}
+           'AI is Analyzing...'}
         </button>
 
         {error && (
@@ -118,7 +149,7 @@ const CodeAuditor = () => {
         {(status === 'POLLING' || status === 'SUBMITTING') && (
           <div className="flex-1 flex flex-col items-center justify-center text-indigo-400 text-center">
             <Loader2 className="w-12 h-12 mb-4 animate-spin opacity-80" />
-            <p className="animate-pulse">Gemini 2.5 is evaluating architecture...</p>
+            <p className="animate-pulse">Auditor is evaluating architecture...</p>
           </div>
         )}
 
@@ -177,9 +208,13 @@ const CodeAuditor = () => {
                               <span>Suggested Refactor</span>
                               <span className="uppercase text-indigo-400">{issue.language || 'code'}</span>
                             </div>
-                            <pre className="refactor-code">
-                              <code>{issue.refactor}</code>
-                            </pre>
+                            <SyntaxHighlighter 
+                              language={issue.language?.toLowerCase() || 'javascript'} 
+                              style={vscDarkPlus}
+                              customStyle={{ margin: 0, borderRadius: '0 0 0.5rem 0.5rem', fontSize: '0.85rem' }}
+                            >
+                              {issue.refactor}
+                            </SyntaxHighlighter>
                           </div>
                         )}
                       </div>
@@ -204,9 +239,13 @@ const CodeAuditor = () => {
                               <span>Suggested Refactor</span>
                               <span className="uppercase text-indigo-400">{issue.language || 'code'}</span>
                             </div>
-                            <pre className="refactor-code">
-                              <code>{issue.refactor}</code>
-                            </pre>
+                           <SyntaxHighlighter 
+                              language={issue.language?.toLowerCase() || 'javascript'} 
+                              style={vscDarkPlus}
+                              customStyle={{ margin: 0, borderRadius: '0 0 0.5rem 0.5rem', fontSize: '0.85rem' }}
+                            >
+                              {issue.refactor}
+                            </SyntaxHighlighter>
                           </div>
                         )}
                       </div>
@@ -231,13 +270,51 @@ const CodeAuditor = () => {
                               <span>Suggested Refactor</span>
                               <span className="uppercase text-indigo-400">{issue.language || 'code'}</span>
                             </div>
-                            <pre className="refactor-code">
-                              <code>{issue.refactor}</code>
-                            </pre>
+                            <SyntaxHighlighter 
+                              language={issue.language?.toLowerCase() || 'javascript'} 
+                              style={vscDarkPlus}
+                              customStyle={{ margin: 0, borderRadius: '0 0 0.5rem 0.5rem', fontSize: '0.85rem' }}
+                            >
+                              {issue.refactor}
+                            </SyntaxHighlighter>
                           </div>
                         )}
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+              {/* --- THE GRAND FINALE: COMPLETE REFACTORED CODE --- */}
+              {auditData.feedback?.final_refactored_code && (
+                <div className="mt-8 pt-8 border-t border-slate-800 animate-in fade-in duration-700">
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <CheckCircle className="text-emerald-400 w-6 h-6" /> 
+                    Production-Ready Refactor
+                  </h3>
+                  <p className="text-slate-400 text-sm mb-4">
+                    This unified codebase resolves all identified security vulnerabilities, eliminates O(n^2) bottlenecks, and enforces modern styling conventions.
+                  </p>
+                  
+                  {/* Reuse our Premium IDE Container for the final output! */}
+                  <div className="ide-container shadow-2xl shadow-indigo-500/10">
+                    <div className="ide-header border-b border-slate-700 bg-[#1e1e2e]">
+                      <div className="ide-dots">
+                        <div className="dot red"></div>
+                        <div className="dot yellow"></div>
+                        <div className="dot green"></div>
+                      </div>
+                      <span className="ml-auto text-xs text-indigo-400 font-mono uppercase tracking-wider font-bold">
+                        {auditData.feedback?.language || 'optimized'}
+                      </span>
+                    </div>
+                    
+                    <SyntaxHighlighter 
+                      language={auditData.feedback?.language?.toLowerCase() || 'javascript'} 
+                      style={vscDarkPlus}
+                      customStyle={{ margin: 0, padding: '1.5rem', backgroundColor: 'transparent', fontSize: '0.9rem' }}
+                    >
+                      {auditData.feedback.final_refactored_code}
+                    </SyntaxHighlighter>
                   </div>
                 </div>
               )}
@@ -247,6 +324,7 @@ const CodeAuditor = () => {
         )}
       </div>
     </div>
+  
   );
 };
 

@@ -52,7 +52,9 @@ def run_code_audit(self, audit_id):
                         "language": "String (e.g., python, javascript, java, cpp)",
                         "refactor": "String containing the cleaner code snippet"
                     }
-                ]
+                ],
+                "language": "String (e.g., python, javascript, ruby, cpp) representing the overall file",
+                "final_refactored_code": "String containing ONE complete, unified, heavily optimized, and secure version of the entire input code. Remove all bottlenecks."
             }
         }
         If a category has no issues, return an empty array [].

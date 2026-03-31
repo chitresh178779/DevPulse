@@ -206,3 +206,174 @@ body {
   overflow-x: auto;
   white-space: pre-wrap; /* Keeps python indentation intact */
 }
+
+/* Dracula Theme for Code Editor */
+.w-tc-editor {
+  --color-canvas-subtle: transparent !important;
+}
+
+.w-tc-editor-text, 
+.w-tc-editor .token.punctuation {
+  color: #f8f8f2 !important; /* White/Off-white */
+}
+
+.w-tc-editor .token.keyword,
+.w-tc-editor .token.operator,
+.w-tc-editor .token.control-flow {
+  color: #ff79c6 !important; /* Neon Pink */
+}
+
+.w-tc-editor .token.string {
+  color: #f1fa8c !important; /* Yellow */
+}
+
+.w-tc-editor .token.function,
+.w-tc-editor .token.class-name {
+  color: #50fa7b !important; /* Neon Green */
+}
+
+.w-tc-editor .token.comment {
+  color: #6272a4 !important; /* Slate Blue */
+  font-style: italic;
+}
+
+.w-tc-editor .token.number,
+.w-tc-editor .token.boolean {
+  color: #bd93f9 !important; /* Purple */
+}
+
+.w-tc-editor .token.variable,
+.w-tc-editor .token.property,
+.w-tc-editor .token.parameter {
+  color: #8be9fd !important; /* Cyan */
+}
+/* --- Premium IDE Container --- */
+.ide-container {
+  background-color: #282a36;
+  border-radius: 0.75rem;
+  border: 1px solid #475569;
+  overflow: hidden;
+  position: relative; /* Crucial for the absolute overlay */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ide-header {
+  background-color: #1e1e2e;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #334155;
+}
+
+.ide-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.ide-dots .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.dot.red { background-color: #ff5f56; }
+.dot.yellow { background-color: #ffbd2e; }
+.dot.green { background-color: #27c93f; }
+
+/* --- Analyzing Blur Overlay & Scanner --- */
+.analyzing-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(40, 42, 54, 0.4); /* Semi-transparent dark background */
+  backdrop-filter: blur(5px); /* The frosted glass effect */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  color: #fff;
+}
+
+.scanning-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #50fa7b; /* Dracula Neon Green */
+  box-shadow: 0 0 15px 2px #50fa7b;
+  animation: scan 2s infinite linear;
+}
+
+@keyframes scan {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* --- Premium Gradient Button --- */
+.premium-audit-btn {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: #ffffff;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  
+  /* Sizing and Spacing fixes */
+  width: 100%;
+  max-width: 320px; /* Prevents the massive stretching */
+  margin: 1.5rem auto 0 auto; /* Detaches it from the IDE and centers it */
+}
+
+.premium-audit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.45);
+}
+
+.premium-audit-btn:active:not(:disabled) {
+  transform: translateY(0px);
+}
+
+.premium-audit-btn:disabled {
+  background: #334155;
+  color: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.8;
+  transform: none;
+}
+/* --- Fix Ghost Cursor Alignment --- */
+.perfect-aligned-editor {
+  min-height: 400px;
+  width: 100%;
+  overflow-y: auto;
+}
+
+/* Force exact pixel parity between the typing layer and visual layer */
+.perfect-aligned-editor textarea,
+.perfect-aligned-editor pre,
+.perfect-aligned-editor code {
+  font-family: 'Courier New', Courier, monospace !important;
+  font-size: 14px !important;
+  line-height: 21px !important; /* Explicit pixel line-height is crucial here */
+  letter-spacing: normal !important;
+  white-space: pre !important;
+  word-spacing: normal !important;
+}
