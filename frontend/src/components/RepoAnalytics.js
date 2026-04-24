@@ -21,12 +21,23 @@ const ScoreRing = ({ score }) => {
   );
 };
 
-const RepoAnalytics = () => {
+// Added refreshTrigger to the props
+const RepoAnalytics = ({ refreshTrigger }) => {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(true);
- 
+
   useEffect(() => {
-    api.get('analytics/repos/')
+    // Reset loading to true so the skeletons show when manually refreshing
+    setLoading(true); 
+    
+    // Grab the user's personal key from browser storage
+    const userGeminiKey = localStorage.getItem('gemini_api_key');
+    
+    api.get('analytics/repos/', {
+      headers: {
+        'X-Gemini-Key': userGeminiKey // Pass it in the headers for GET requests!
+      }
+    })
       .then(res => {
         setRepos(res.data);
         setLoading(false);
@@ -35,7 +46,7 @@ const RepoAnalytics = () => {
         console.error("Failed to fetch analytics", err);
         setLoading(false);
       });
-  }, []);
+  }, [refreshTrigger]);// <-- The component will now re-run this effect when the trigger changes
 
   if (loading) {
     return (

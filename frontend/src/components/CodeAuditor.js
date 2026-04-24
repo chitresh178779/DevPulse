@@ -12,7 +12,23 @@ const CodeAuditor = () => {
   const [error, setError] = useState('');
   
   const pollingIntervalRef = useRef(null);
+  useEffect(() => {
+    localStorage.setItem('draft_auditor_code', code);
+  }, [code]);
 
+  // 2. Listen for the Dashboard's "Resume" signal to reload the code
+  useEffect(() => {
+    const handleRestore = () => {
+      const restoredCode = localStorage.getItem('draft_auditor_code') || '';
+      setCode(restoredCode);
+    };
+    
+    // Run once on load to grab existing drafts
+    handleRestore();
+    
+    window.addEventListener('workspace-restored', handleRestore);
+    return () => window.removeEventListener('workspace-restored', handleRestore);
+  }, []);
   // Cleanup the interval if the user navigates away
   useEffect(() => {
     return () => clearInterval(pollingIntervalRef.current);
@@ -21,13 +37,25 @@ const CodeAuditor = () => {
   const startAudit = async () => {
     if (!code.trim()) return;
     
+    // --- BYOK INTEGRATION: Grab the key from the browser ---
+    const userGeminiKey = localStorage.getItem('gemini_api_key');
+    
+    if (!userGeminiKey) {
+      setError('Please add your Google Gemini API Key in the Settings panel to run an audit.');
+      return;
+    }
+
     setStatus('SUBMITTING');
     setError('');
     setAuditData(null);
 
     try {
-      // 1. Submit the code to Django
-      const res = await api.post('audit/submit/', { code });
+      // 1. Submit the code to Django WITH the user's custom API key
+      const res = await api.post('audit/submit/', { 
+        code: code,
+        gemini_api_key: userGeminiKey 
+      });
+      
       const auditId = res.data.audit_id;
       
       setStatus('POLLING');
@@ -37,7 +65,9 @@ const CodeAuditor = () => {
       
     } catch (err) {
       console.error(err);
-      setError('Failed to submit code for audit.');
+      // Smart Error Handling: Show Django's specific error message if it exists
+      const backendError = err.response?.data?.error || 'Failed to submit code for audit.';
+      setError(backendError);
       setStatus('FAILED');
     }
   };
@@ -53,7 +83,9 @@ const CodeAuditor = () => {
         setStatus('COMPLETED');
       } else if (currentStatus === 'FAILED') {
         clearInterval(pollingIntervalRef.current);
-        setError('The AI worker failed to process this snippet.');
+        // Display AI failure message if available from backend
+        const aiError = res.data.feedback?.error || 'The AI worker failed to process this snippet. Check your API key.';
+        setError(aiError);
         setStatus('FAILED');
       }
       // If PENDING or PROCESSING, we just let the interval run...
@@ -130,7 +162,7 @@ const CodeAuditor = () => {
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg flex items-center gap-2 text-sm">
-            <AlertTriangle className="w-4 h-4" /> {error}
+            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
           </div>
         )}
       </div>

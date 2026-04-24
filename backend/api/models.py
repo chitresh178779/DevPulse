@@ -51,3 +51,17 @@ class CodeAudit(models.Model):
 
     def __str__(self):
         return f"Audit {self.id} - {self.status}"
+    
+class WorkspaceSnapshot(models.Model):
+    # OneToOne ensures each user has exactly one snapshot at a time
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='workspace_snapshot')
+    
+    # We store the raw JSON exactly as React sends it
+    vault_state = models.JSONField(default=dict, blank=True)
+    auditor_state = models.JSONField(default=dict, blank=True)
+    
+    # Automatically updates every time they hit 'Pause'
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Workflow Snapshot"

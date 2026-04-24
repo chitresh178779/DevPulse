@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from api.views import GitHubLogin, RepoAnalyticsView , SnippetViewSet, CodeAuditorView, ComponentListCreateView, ComponentDetailView, CodeAuditStatusView, CodeAuditSubmitView
+from api.views import GitHubLogin, RepoAnalyticsView , SnippetViewSet, CodeAuditorView, ComponentListCreateView, ComponentDetailView, CodeAuditStatusView, CodeAuditSubmitView, WorkspaceSnapshotView
 
 
 router = DefaultRouter()
@@ -36,4 +36,5 @@ urlpatterns = [
     path('api/components/<int:pk>/', ComponentDetailView.as_view(), name='component-detail'),
     path('api/audit/submit/', CodeAuditSubmitView.as_view(), name='audit_submit'),
     path('api/audit/<int:pk>/status/', CodeAuditStatusView.as_view(), name='audit_status'),
+    path('api/workspace/snapshot/', WorkspaceSnapshotView.as_view(), name='workspace_snapshot'),
 ]
