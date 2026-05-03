@@ -1,0 +1,311 @@
+/* --- BALANCED BRAND THEME VARIABLES --- */
+:root {
+  --bg-main: #000000;         /* Deep rich navy/slate instead of pure black */
+  --bg-panel: #000000;        /* Slightly lighter slate for cards/nav */
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  
+  /* Brand Accents */
+  --brand-indigo: #6366f1;
+  --brand-indigo-hover: #4f46e5;
+  --brand-purple: #a855f7;
+}
+
+.landing-container {
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  /* Adds a subtle, static glowing radial background behind the top section */
+  background-image: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* --- Navbar --- */
+.landing-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background-color: rgba(11, 15, 25, 0.8);
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 100; /* Ensures it sits above your hero section */
+
+  /* 2. The Glassmorphism Effect */
+  background-color: rgba(10, 10, 10, 0.5); /* Semi-transparent dark background */
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px); /* Safari support */
+  
+  /* 3. Subtle edge highlight */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  
+ 
+}
+
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.nav-logo span {
+  color: var(--brand-indigo); /* Reinstated the Indigo Plus! */
+}
+
+.nav-links {
+  display: none;
+  gap: 32px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+  }
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--text-main);
+}
+
+/* Colored Action Button */
+.nav-btn {
+  background-color: var(--brand-indigo);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin-right: 50px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.2);
+}
+
+.nav-btn:hover {
+  background-color: var(--brand-indigo-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* --- Hero Section --- */
+.hero-section {
+  padding: 140px 24px 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 50px;
+  background-color: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 32px;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 5rem;
+  }
+}
+
+/* Reinstated the beautiful purple/indigo gradient text */
+.hero-title-highlight {
+  background: linear-gradient(to right, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 700px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+/* Primary Action Button */
+.hero-btn {
+  background-color: var(--brand-indigo);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+.hero-btn:hover {
+  background-color: var(--brand-indigo-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+}
+
+/* --- Problem Section --- */
+.problem-section {
+  padding: 100px 24px;
+  background-color: var(--bg-main); /* Semi-transparent panel */
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.problem-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.problem-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
+}
+
+.problem-text {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+.problem-text strong {
+  color: var(--text-main);
+}
+
+/* --- Features Section --- */
+.features-section {
+  padding: 120px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .feature-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.feature-card {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 32px;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Reinstated the colorful icon backgrounds */
+.feature-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.feature-card:nth-child(1) .feature-icon-wrapper { background-color: rgba(99, 102, 241, 0.1); color: #818cf8; }
+.feature-card:nth-child(2) .feature-icon-wrapper { background-color: rgba(168, 85, 247, 0.1); color: #c084fc; }
+.feature-card:nth-child(3) .feature-icon-wrapper { background-color: rgba(34, 197, 94, 0.1); color: #4ade80; }
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.feature-desc {
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* --- CTA Section --- */
+.cta-section {
+  padding: 120px 24px;
+  text-align: center;
+  border-top: 1px solid var(--border-subtle);
+  background-image: radial-gradient(circle at 50% 100%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+}
+
+.cta-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  letter-spacing: -1px;
+}
+
+.cta-btn {
+  background-color: var(--brand-indigo);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+}
+
+.cta-btn:hover {
+  background-color: var(--brand-indigo-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+}

@@ -7,12 +7,14 @@ import Dashboard from './components/Dashboard';
 import ComponentLibrary from './components/ComponentLibrary';
 import CodeAuditor from './components/CodeAuditor';
 import './App.css'; 
+import LandingPage from './components/LandingPage';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<LandingPage />}/>
+        <Route path="/login" element={<Login />} />
         <Route path="/login/callback" element={<Callback />} />
         <Route path="/dashboard" element={<Dashboard />}  />
         <Route path="/components" element={<ComponentLibrary />} />
